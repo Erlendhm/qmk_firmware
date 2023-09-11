@@ -35,7 +35,8 @@
  */
 
 enum custom_keycodes {
-     KC_APPROX = SAFE_RANGE,
+     KC_CANCELLING = SAFE_RANGE,
+     KC_APPROX,
      KC_FRACTION,
      KC_MULTIPLICATION,
      KC_SQUAREROOT,
@@ -57,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_KP_0, MO(1)),
 
  [1] = LAYOUT_numpad(
-     KC_TRNS, KC_TRNS, KC_TRNS,
+     KC_TRNS, KC_CANCELLING, KC_TRNS,
      KC_APPROX, KC_FRACTION, KC_MULTIPLICATION, KC_SQUAREROOT,
      KC_314, KC_PARENTHESES, KC_TO_THE_POWER, KC_PLUSMINUS,
      KC_X, KC_Y, KC_Z,
@@ -76,6 +77,15 @@ Macros:
 */
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
+        case KC_CANCELLING:
+            if (record->event.pressed) {
+                tap_code16(S(A(KC_7)));
+                SEND_STRING("cancel");
+                tap_code16(S(A(KC_8)));
+                tap_code16(S(A(KC_9)));
+                SEND_STRING (SS_TAP(X_LEFT));
+        }
+            return false;
         case KC_APPROX:
             if (record->event.pressed) {
                 tap_code16(A(KC_0));
