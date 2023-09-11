@@ -15,6 +15,7 @@
   */
 
 #include QMK_KEYBOARD_H
+#include "sendstring_norwegian.h"
 
 /*
  * ┌───┐   ┌───┬───┐
@@ -33,61 +34,136 @@
  * └───────┴───┴───┘
  */
 
-{
- "keyboard": "macro1",
- "keymap": "ErlendHM",
- "host_language": "norwegian",
- }
-
-enum {
-    KC_APPROX,
-    KC_FRACTION,
-    KC_MULTIPLICATION,
-    KC_SQUAREROOT,
-    KC_PLUSMINUS,
-    KC_LATEX_SPACE
-}
+enum custom_keycodes {
+     KC_APPROX = SAFE_RANGE,
+     KC_FRACTION,
+     KC_MULTIPLICATION,
+     KC_SQUAREROOT,
+     KC_314,
+     KC_PARENTHESES,
+     KC_TO_THE_POWER,
+     KC_PLUSMINUS,
+     KC_LATEX_SPACE,
+ };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-	[0] = LAYOUT_numpad(
-		RSFT(KC_ENTER), KC_BSPC,     KC_DEL,
-		KC_KP_EQUAL, KC_KP_SLASH, KC_KP_ASTERISK, KC_KP_MINUS,
-		KC_KP_7, KC_KP_8,     KC_KP_9,        KC_KP_PLUS,
-		KC_KP_4, KC_KP_5,     KC_KP_6,
-		KC_KP_1, KC_KP_2,     KC_KP_3,        KC_KP_ENTER,
-		KC_KP_0, MO(1)),
+ [0] = LAYOUT_numpad(
+     RSFT(KC_ENTER), KC_BSPC,     KC_DEL,
+     KC_KP_EQUAL, KC_KP_SLASH, KC_KP_ASTERISK, KC_KP_MINUS,
+     KC_KP_7, KC_KP_8,     KC_KP_9,        KC_KP_PLUS,
+     KC_KP_4, KC_KP_5,     KC_KP_6,
+     KC_KP_1, KC_KP_2,     KC_KP_3,        KC_KP_ENTER,
+     KC_KP_0, MO(1)),
 
-	[1] = LAYOUT_numpad(
-		KC_TRNS, KC_TRNS, KC_TRNS,
-		KC_APPROX, KC_FRACTION, KC_MULTIPLICATION, KC_SQUAREROOT,
-		KC_LEFT_PAREN, KC_RIGHT_PAREN, KC_CIRCUMFLEX, KC_PLUSMINUS,
-		X, KC_Y, KC_Z,
-		A, KC_B, KC_C, KC_LATEX_SPACE,
-		KC_KP_DOT, KC_TRNS),
+ [1] = LAYOUT_numpad(
+     KC_TRNS, KC_TRNS, KC_TRNS,
+     KC_APPROX, KC_FRACTION, KC_MULTIPLICATION, KC_SQUAREROOT,
+     KC_314, KC_PARENTHESES, KC_TO_THE_POWER, KC_PLUSMINUS,
+     KC_X, KC_Y, KC_Z,
+     KC_A, KC_B, KC_C, KC_LATEX_SPACE,
+     KC_KP_DOT, KC_TRNS),
 
-	[2] = LAYOUT_numpad(
-		KC_TRNS, KC_TRNS, KC_TRNS,
-		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-		KC_TRNS, KC_TRNS, KC_TRNS,
-		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
-		KC_TRNS, KC_TRNS), };
-
-bool encoder_update_user(uint8_t index, bool clockwise) {
-            if (index == 0) {
-                if (clockwise) {
-                    tap_code(KC_RIGHT);
-                } else {
-                    tap_code(KC_LEFT);
-                }
-            }
-            else if (index == 1) {
-                if (clockwise) {
-                    tap_code(KC_PGDN);
-                } else {
-                    tap_code(KC_PGUP);
-                }
+ [2] = LAYOUT_numpad(
+     KC_TRNS, KC_TRNS, KC_TRNS,
+     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+     KC_TRNS, KC_TRNS, KC_TRNS,
+     KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+     KC_TRNS, KC_TRNS), };
+/*
+Macros:
+*/
+bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case KC_APPROX:
+            if (record->event.pressed) {
+                tap_code16(A(KC_0));
+                SEND_STRING(" ");
             }
             return false;
+        case KC_FRACTION:
+            if (record->event.pressed) {
+                tap_code16(S(A(KC_7)));
+                SEND_STRING("dfrac");
+                tap_code16(S(A(KC_8)));
+                tap_code16(S(A(KC_9)));
+                tap_code16(S(A(KC_8)));
+                tap_code16(S(A(KC_9)));
+                SEND_STRING (SS_TAP(X_LEFT) SS_TAP(X_LEFT) SS_TAP(X_LEFT));
+            }
+            return false;
+        case KC_MULTIPLICATION:
+            if (record->event.pressed) {
+                tap_code16(S(A(KC_7)));
+                SEND_STRING("cdot ");
+            }
+            return false;
+        case KC_SQUAREROOT:
+        if (record->event.pressed) {
+            tap_code16(S(A(KC_7)));
+            SEND_STRING("sqrt");
+            tap_code16(S(A(KC_8)));
+            tap_code16(S(A(KC_9)));
+            SEND_STRING (SS_TAP(X_LEFT));
         }
+            return false;
+        case KC_314:
+        if (record->event.pressed) {
+            tap_code16(S(A(KC_7)));
+            SEND_STRING("pi ");
+        }
+            return false;
+        case KC_PARENTHESES:
+        if (record->event.pressed) {
+            tap_code16(S(KC_8));
+            tap_code16(S(KC_9));
+            SEND_STRING (SS_TAP(X_LEFT));
+        }
+            return false;
+        case KC_TO_THE_POWER:
+        if (record->event.pressed) {
+            tap_code16(S(KC_RIGHT_BRACKET));
+            tap_code16(S(A(KC_8)));
+            tap_code16(S(A(KC_9)));
+            SEND_STRING (SS_TAP(X_LEFT));
+        }
+            return false;
+        case KC_PLUSMINUS:
+        if (record->event.pressed) {
+            tap_code16(S(A(KC_7)));
+            SEND_STRING("pm ");
+        }
+            return false;
+        case KC_LATEX_SPACE:
+        if (record->event.pressed) {
+            tap_code16(S(A(KC_7)));
+            SEND_STRING("; ");
+        }
+            return false;
+}
+    return true;
+}
+
+/*
+Rotary:
+*/
+
+bool encoder_update_user(uint8_t index, bool clockwise) {
+    if (index == 0) {
+        if (clockwise) {
+            tap_code(KC_RIGHT);
+        } else {
+            tap_code(KC_LEFT);
+        }
+    } else if (index == 1) {
+        if (clockwise) {
+            tap_code(KC_PGDN);
+        } else {
+            tap_code(KC_PGUP);
+        }
+    }
+    return false;
+}
+
+
