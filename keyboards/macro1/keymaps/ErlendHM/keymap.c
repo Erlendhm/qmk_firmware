@@ -40,18 +40,18 @@ enum custom_keycodes {
      KC_FRACTION,
      KC_MULTIPLICATION,
      KC_SQUAREROOT,
-     KC_314,
+     KC_ALIGN,
      KC_PARENTHESES,
      KC_TO_THE_POWER,
-     KC_PLUSMINUS,
      KC_LATEX_SPACE,
+     KC_LATEX_RETURN,
  };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
  [0] = LAYOUT_numpad(
      RSFT(KC_ENTER), KC_BSPC,     KC_DEL,
-     KC_KP_EQUAL, KC_KP_SLASH, KC_KP_ASTERISK, KC_KP_MINUS,
+     KC_KP_EQUAL, KC_KP_SLASH, KC_MULTIPLICATION, KC_KP_MINUS,
      KC_KP_7, KC_KP_8,     KC_KP_9,        KC_KP_PLUS,
      KC_KP_4, KC_KP_5,     KC_KP_6,
      KC_KP_1, KC_KP_2,     KC_KP_3,        KC_KP_ENTER,
@@ -59,10 +59,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
  [1] = LAYOUT_numpad(
      KC_TRNS, KC_CANCELLING, KC_TRNS,
-     KC_APPROX, KC_FRACTION, KC_MULTIPLICATION, KC_SQUAREROOT,
-     KC_314, KC_PARENTHESES, KC_TO_THE_POWER, KC_PLUSMINUS,
+     KC_APPROX, KC_FRACTION, KC_KP_ASTERISK, KC_SQUAREROOT,
+     KC_ALIGN, KC_PARENTHESES, KC_TO_THE_POWER, KC_LATEX_SPACE,
      KC_X, KC_Y, KC_Z,
-     KC_A, KC_B, KC_C, KC_LATEX_SPACE,
+     KC_A, KC_B, KC_C, KC_LATEX_RETURN,
      KC_KP_DOT, KC_TRNS),
 
  [2] = LAYOUT_numpad(
@@ -105,8 +105,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
         case KC_MULTIPLICATION:
             if (record->event.pressed) {
-                tap_code16(S(A(KC_7)));
-                SEND_STRING("cdot ");
+                tap_code16(LCTL(LALT(LGUI(S(KC_EQUAL)))));
             }
             return false;
         case KC_SQUAREROOT:
@@ -118,10 +117,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             SEND_STRING (SS_TAP(X_LEFT));
         }
             return false;
-        case KC_314:
+        case KC_ALIGN:
         if (record->event.pressed) {
             tap_code16(S(A(KC_7)));
-            SEND_STRING("pi ");
+            SEND_STRING("begin");
+            tap_code16(S(A(KC_8)));
+            SEND_STRING("align");
+            tap_code16(S(A(KC_9)));
+            tap_code16(S(KC_ENTER));
+            tap_code16(S(KC_ENTER));
+            tap_code16(S(A(KC_7)));
+            SEND_STRING("end");
+            tap_code16(S(A(KC_8)));
+            SEND_STRING("align");
+            tap_code16(S(A(KC_9)));
+            SEND_STRING (SS_TAP(X_UP));
         }
             return false;
         case KC_PARENTHESES:
@@ -139,16 +149,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             SEND_STRING (SS_TAP(X_LEFT));
         }
             return false;
-        case KC_PLUSMINUS:
-        if (record->event.pressed) {
-            tap_code16(S(A(KC_7)));
-            SEND_STRING("pm ");
-        }
-            return false;
         case KC_LATEX_SPACE:
         if (record->event.pressed) {
             tap_code16(S(A(KC_7)));
             SEND_STRING("; ");
+        }
+            return false;
+        case KC_LATEX_RETURN:
+        if (record->event.pressed) {
+            tap_code16(S(A(KC_7)));
+            tap_code16(S(A(KC_7)));
+            tap_code16(S(A(KC_7)));
+            tap_code16(S(A(KC_7)));
+            tap_code16(S(KC_ENTER));
         }
             return false;
 }
